@@ -301,14 +301,17 @@ have update-desktop-database && update-desktop-database "${HOME}/.local/share/ap
 progress_end
 
 if [ "$GUI" = 1 ]; then
-    z --question --ok-label="Play now" --cancel-label="Close" --text="<b>SWG Restoration is installed.</b>
+    if z --question --ok-label="Play now" --cancel-label="Close" --text="<b>SWG Restoration is installed.</b>
 
 Start it from the <b>SWG Restoration</b> icon on your desktop or in your app menu (Games).
 
 Tips from SWGR's wiki:
   - Graphics glitches: in the launcher's game settings choose \"Shader 2.0\".
   - Wrong screen size: right-click the menu entry > Fix screen size.
-  - Install log: $LOG" && { setsid "$BIN" >/dev/null 2>&1 & }
+  - Install log: $LOG"; then
+        setsid "$BIN" >/dev/null 2>&1 &
+    fi
 else
     printf '\nDone. Start it from your app menu or run: %s\nLog: %s\n' "$BIN" "$LOG"
 fi
+exit 0
