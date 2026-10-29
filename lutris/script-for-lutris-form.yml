@@ -1,0 +1,39 @@
+files:
+- swgr:
+    url: https://patch.swgr.org/patch/launcher/SWG%20Restoration%20Install.exe
+    filename: SWG Restoration Install.exe
+game:
+  arch: win64
+  prefix: $GAMEDIR
+  exe: $GAMEDIR/drive_c/SWG Restoration/SWG Restoration.exe
+  working_dir: $GAMEDIR/drive_c/SWG Restoration
+installer:
+- task:
+    name: create_prefix
+    arch: win64
+    prefix: $GAMEDIR
+- task:
+    description: Wine settings from the SWGR wiki
+    name: winetricks
+    prefix: $GAMEDIR
+    app: win10 hidewineexports=enable windowmanagerdecorated=n windowmanagermanaged=y
+- task:
+    description: DirectX, XAudio, Visual C++ 2022 and fonts (several minutes)
+    name: winetricks
+    prefix: $GAMEDIR
+    silent: true
+    app: d3dcompiler_43 d3dx10 d3dx9 d3dx9_39 xact xact_x64 vcrun2022 corefonts
+- copy:
+    src: swgr
+    dst: $GAMEDIR/drive_c
+- task:
+    description: SWGR's installer - accept the license, keep C:\SWG Restoration, then sign in and patch
+    name: wineexec
+    prefix: $GAMEDIR
+    executable: $GAMEDIR/drive_c/SWG Restoration Install.exe
+    working_dir: $GAMEDIR/drive_c
+wine:
+  dxvk: true
+system:
+  env:
+    DXVK_LOG_LEVEL: none

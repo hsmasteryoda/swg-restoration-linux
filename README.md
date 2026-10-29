@@ -46,7 +46,7 @@ Afterwards start **SWG Restoration** from your app menu (Games). Right-click the
 | Components | `d3dcompiler_43 d3dx10 d3dx9 d3dx9_39 dxvk xact xact_x64 vcrun2022 corefonts` (winetricks; a recent winetricks is downloaded if yours is old or missing). A Visual C++ window may say *Setup Failed* - the wiki says that's harmless |
 | SWGR installer | Downloaded from `patch.swgr.org`, copied onto Wine's C: drive (the wiki notes Wine sometimes can't see it otherwise) and started |
 | Screen size | Writes `user.cfg` next to the game's `options.cfg` with your monitor's resolution and refresh rate - the wiki's fix for KDE + NVIDIA offering only 1024x768 |
-| App menu | `~/.local/bin/swg-restoration` and a menu entry with the launcher's own icon |
+| Shortcuts | A desktop icon and an app-menu entry with the SWGR logo (taken from their launcher), replacing the plain shortcuts Wine creates; `~/.local/bin/swg-restoration` for terminals |
 
 Log: `~/.cache/swg-restoration-installer.log`
 

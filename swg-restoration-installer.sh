@@ -28,6 +28,9 @@ WINETRICKS_URL="https://raw.githubusercontent.com/Winetricks/winetricks/master/s
 BIN="${HOME}/.local/bin/swg-restoration"
 DESKTOP="${HOME}/.local/share/applications/swg-restoration.desktop"
 ICON="${HOME}/.local/share/icons/hicolor/256x256/apps/swg-restoration.png"
+DESKDIR="$(xdg-user-dir DESKTOP 2>/dev/null || echo "$HOME/Desktop")"
+DESKICON="$DESKDIR/SWG Restoration.desktop"           # same name Wine uses for its own shortcut -> replaced by ours
+WINEMENU="${HOME}/.local/share/applications/wine/Programs/SWG Restoration.desktop"  # Wine's duplicate menu entry
 LOCAL_INSTALLER="" RESOLUTION="" RES_FLAG=0 UNINSTALL=0 GUI=1 PREFIX_SET=0
 
 while [ $# -gt 0 ]; do
@@ -82,7 +85,7 @@ run() { "$@" >> "$LOG" 2>&1; }  # quiet in GUI mode, everything goes to the log
 if [ "$UNINSTALL" = 1 ]; then
     ask "Remove SWG Restoration?\n\nThis deletes $PREFIX (the game, its Wine setup and launcher settings)\nand the app-menu entry. Your swgr.org account is not affected." "Remove" "Cancel" || exit 0
     WINEPREFIX="$PREFIX" wineserver -k 2>/dev/null
-    rm -rf -- "$PREFIX"; rm -f -- "$BIN" "$DESKTOP" "$ICON"
+    rm -rf -- "$PREFIX"; rm -f -- "$BIN" "$DESKTOP" "$ICON" "$DESKICON" "$WINEMENU"
     have update-desktop-database && update-desktop-database "${HOME}/.local/share/applications" 2>/dev/null
     info "SWG Restoration was removed."
     exit 0
@@ -287,13 +290,20 @@ Exec="$SELF" --prefix "$PREFIX" --resolution auto
 Name=Uninstall SWG Restoration
 Exec="$SELF" --prefix "$PREFIX" --uninstall
 EOF
+# desktop icon (replaces the plain shortcut Wine makes from SWGR's .lnk) and no duplicate Wine menu entry
+if [ -d "$DESKDIR" ]; then
+    cp -f -- "$DESKTOP" "$DESKICON"
+    chmod +x "$DESKICON"                                               # KDE/Xfce: runnable without a prompt
+    have gio && gio set "$DESKICON" metadata::trusted true 2>/dev/null  # GNOME: "Allow Launching"
+fi
+rm -f -- "$WINEMENU"
 have update-desktop-database && update-desktop-database "${HOME}/.local/share/applications" 2>/dev/null
 progress_end
 
 if [ "$GUI" = 1 ]; then
     z --question --ok-label="Play now" --cancel-label="Close" --text="<b>SWG Restoration is installed.</b>
 
-Start it any time from your app menu (Games > SWG Restoration).
+Start it from the <b>SWG Restoration</b> icon on your desktop or in your app menu (Games).
 
 Tips from SWGR's wiki:
   - Graphics glitches: in the launcher's game settings choose \"Shader 2.0\".
