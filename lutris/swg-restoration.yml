@@ -1,0 +1,64 @@
+name: 'Star Wars Galaxies: An Empire Divided'
+game_slug: star-wars-galaxies-an-empire-divided
+version: SWG Restoration (Wine, wiki method 2026)
+slug: star-wars-galaxies-swg-restoration-wine-2026
+runner: wine
+
+description: >-
+  Installs the SWG Restoration (swgr.org) launcher with the setup from SWGR's Linux wiki:
+  Windows 10, hidden Wine exports, window-manager managed windows, and the d3dx/xact/vcrun2022
+  components. After the installer finishes, sign in to the launcher with your swgr.org account,
+  pick a NEW EMPTY folder for the game files (e.g. C:\SWGR-Game), press Update and wait for
+  patching (~4 GB). If the game offers only 1024x768, create user.cfg next to options.cfg in the
+  game folder with [ClientGraphics] screenWidth=/screenHeight= set to your screen.
+
+notes: >-
+  Unofficial community installer (github.com/hsmasteryoda/swg-restoration-linux). SWG Restoration
+  supports Windows only and does not provide support for Linux. A Visual C++ 2022 setup window may
+  report "Setup Failed" - that is harmless. Graphics glitches: choose "Shader 2.0" in the launcher's
+  game settings.
+
+script:
+  files:
+  - swgr:
+      url: https://patch.swgr.org/patch/launcher/SWG%20Restoration%20Install.exe
+      filename: SWG Restoration Install.exe
+
+  game:
+    arch: win64
+    prefix: $GAMEDIR
+    exe: $GAMEDIR/drive_c/SWG Restoration/SWG Restoration.exe
+    working_dir: $GAMEDIR/drive_c/SWG Restoration
+
+  installer:
+  - task:
+      name: create_prefix
+      arch: win64
+      prefix: $GAMEDIR
+  - task:
+      description: Wine settings from the SWGR wiki
+      name: winetricks
+      prefix: $GAMEDIR
+      app: win10 hidewineexports=enable windowmanagerdecorated=n windowmanagermanaged=y
+  - task:
+      description: DirectX, XAudio, Visual C++ 2022 and fonts (several minutes)
+      name: winetricks
+      prefix: $GAMEDIR
+      silent: true
+      app: d3dcompiler_43 d3dx10 d3dx9 d3dx9_39 xact xact_x64 vcrun2022 corefonts
+  - copy:
+      src: swgr
+      dst: $GAMEDIR/drive_c
+  - task:
+      description: SWGR's installer - accept the license, keep C:\SWG Restoration, then sign in and patch
+      name: wineexec
+      prefix: $GAMEDIR
+      executable: $GAMEDIR/drive_c/SWG Restoration Install.exe
+      working_dir: $GAMEDIR/drive_c
+
+  wine:
+    dxvk: true
+
+  system:
+    env:
+      DXVK_LOG_LEVEL: none
