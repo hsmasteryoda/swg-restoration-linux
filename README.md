@@ -71,6 +71,10 @@ Running it again repairs an install (finished steps are skipped).
 lutris -i lutris/swg-restoration.yml
 ```
 
+It has also been submitted to lutris.net as **"SWG Restoration (Wine)"** on the
+[Star Wars Galaxies page](https://lutris.net/games/star-wars-galaxies-an-empire-divided/). It appears there
+once the Lutris moderators approve it.
+
 ## Troubleshooting
 
 - **Graphics glitches:** in the launcher's game settings choose **Shader 2.0** (SWGR wiki).
